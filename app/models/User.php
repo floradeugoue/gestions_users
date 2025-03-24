@@ -9,8 +9,7 @@ class User {
         $this->conn = $database->getConnection();
     }
 
-    // Enregistrement d'un utilisateur
-    public function register($username, $email, $password, $image) {
+    public function register($username, $email, $password, $image, $role_id) {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         
         // Définir le dossier d'upload
@@ -19,21 +18,24 @@ class User {
         
         // Vérifier et déplacer l'image téléchargée
         if (move_uploaded_file($image['tmp_name'], $imagePath)) {
-            $query = "INSERT INTO users (username, email, pswd, image_u) 
-                      VALUES (:nom, :email, :mot_de_passe, :image)";
+            // Requête d'insertion avec le rôle
+            $query = "INSERT INTO users (username, email, pswd, image_u, id) 
+                      VALUES (:username, :email, :mot_de_passe, :image,  :id)";
             
             $stmt = $this->conn->prepare($query);
             
             return $stmt->execute([
-                'nom' => $username,
+                'username' => $username,
                 'email' => $email,
                 'mot_de_passe' => $hashedPassword,
-                'image' => $imagePath
+                'image' => $imagePath,
+                'id' => $role_id // Ajouter le rôle ici
             ]);
         } else {
             return false; // Échec du téléchargement de l'image
         }
-    }    
+    }
+    
 
     // Trouver un utilisateur par email
     public function findByEmail($email) {

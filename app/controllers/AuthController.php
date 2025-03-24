@@ -28,9 +28,13 @@ class AuthController {
             if ($userModel->findByEmail($email)) {
                 die("Cet email est déjà utilisé.");
             }
+            
+            // Par défaut, on attribue le rôle 'client' (role_id = 2)
+            $role_id = 2;
+
     
             // Enregistrement de l'utilisateur avec l'image
-            if ($userModel->register($username, $email, $password, $image)) {
+            if ($userModel->register($username, $email, $password, $image,$role_id)) {
                 session_start(); // Démarrer la session après l'inscription
                 $_SESSION['username'] = $username; // Stocker le nom de l'utilisateur en session
     
